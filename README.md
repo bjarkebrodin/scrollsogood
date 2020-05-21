@@ -42,7 +42,7 @@ The SSG logic lives in the `ssg` object, thus all calls to the SSG api must be q
 Scrolling up and down is handled internally, but if you wish to modify the existing behaviour or add buttons and such, the below methods are provided 
 
 Method | Specification | Transition
-- | - | -
+-|-|-
 `ssg.scrollDown()` | Scrolls down one page, if there is one | Yes
 `ssg.scrollUp()` | Scrolls up one page, if there is one | Yes
 `ssg.scrollTo(pageNum)` | Scrolls to the specified page, if there is one | Yes
@@ -50,7 +50,7 @@ Method | Specification | Transition
 
 ##### Informative scroll methods
 Method | Specification
-- | -
+-|-
 `ssg.getPage()` | Returns the object representing the current page
 `ssg.getPageIndex()` | Returns the index of the current page (starting from 0 heh)
 
@@ -59,7 +59,7 @@ Method | Specification
 No horizontal navigation is done internally, the functionality is simply provided through the following methods. Note that since the client code has all the power here, there are __NO CHECKS__ performed, to determine whether there is actually any content to reveal!
 
 Method | Specification | Transition
-- | - | -
+-|-|-
 `ssg.revealLeft()` | Reveals the left child of the current page | Yes
 `ssg.revealRight()` | Reveals the left child of the current page | Yes
 `ssg.conceal()` | Resets to the default page | Yes
