@@ -8,20 +8,46 @@
     <script src="../ssg.js"></script>
 </head>
 <body>
-    <div class="ssg page">1</div>
-    <div class="ssg page">2</div>
-    <div class="ssg page">3</div>
-    <div class="ssg page">4</div>
-    <div class="ssg page">5</div>
-    <div class="ssg page">6</div>
-    <div class="ssg page">7</div>
-    <div class="ssg page">8</div>
+    <div class="ssg-page">
+        1
+        <button onclick="ssg.revealRight()">right</button>
+    </div>
+    <div class="ssg-page">
+        2
+        <button onclick="ssg.revealLeft()">left</button>
+        <div class="ssg-child left">
+            <button onclick="ssg.conceal()">back</button>
+            2.left
+        </div>
+    </div>
+    <div class="ssg-page">3
+        <button onclick="ssg.revealRight()">right</button>
+        <div class="ssg-child right">
+            <button onclick="ssg.conceal()">back</button>
+            3.right
+        </div>
+    </div>
+    <div class="ssg-page">4
+        <button onclick="ssg.revealRight()">right</button>
+        <button onclick="ssg.revealLeft()">left</button>
+        <div class="ssg-child right">
+            <button onclick="ssg.conceal()">back</button>
+            4.right
+        </div>
+        <div class="ssg-child left">
+            <button onclick="ssg.conceal()">back</button>
+            4.left</div>
+    </div>
+    <div class="ssg-page">5</div>
+    <div class="ssg-page">6</div>
+    <div class="ssg-page">7</div>
+    <div class="ssg-page">8</div>
 
     <style>
-        .ssg.page:nth-of-type(2n) {
+        .ssg-page:nth-of-type(2n) {
             background-color: black;
         }
-        .ssg.page {
+        .ssg-page {
             font-size: 100px;
             color: gray;
         }

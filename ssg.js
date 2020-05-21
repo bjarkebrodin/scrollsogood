@@ -61,6 +61,11 @@ const ssg = function() {
         };
     }
 
+    const STATE = {
+        leftRevealed: false,
+        rightRevealed: false
+    };
+
     const TIMEOUT = 800;
     const TOUCH_SENSITIVITY = 5;
     const UP_KEYS = [37, 38];
@@ -94,12 +99,11 @@ const ssg = function() {
     const getTransitionDuration = function() { return 'getTransitionDuration'; };
     const getTransitionFunction = function() { return 'getTransitionFunction'; };
     
-    const getCurrentPage = function() { return current; };
-    
+    const getPage = function() { return pages[current]; };
+    const getPageIndex = function() { return current; }; 
+
     const hasDown = function() { return current < max; };
     const hasUp = function() { return current > 0; };
-    const hasRight = function() { return 'hasRight'; };
-    const hasLeft = function() { return 'hasLeft'; };
     
     const scrollDown = function() {
         if (current + 1 > max) {
@@ -134,8 +138,24 @@ const ssg = function() {
         document.body.style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
     };
 
-    const revealRight = function() { return 'scrollRight'; };
-    const revealLeft = function() { return 'scrollLeft'; };
+    const revealRight = function() { 
+        pages[current].style.transform = `translateX(-${100 * unit.vw()}px)`;
+        STATE.rightRevealed = true;
+        lock = true;
+    };
+
+    const revealLeft = function() { 
+        pages[current].style.transform = `translateX(${100 * unit.vw()}px)`;
+        STATE.leftRevealed = true;
+        lock = true;
+    };
+
+    const conceal = function() {
+        pages[current].style.transform = `translateX(0px)`;
+        STATE.leftRevealed = false;
+        STATE.rightRevealed = false;
+        lock = false;
+    }
 
     const handleWheel = function(event) {
         event.stopPropagation();
@@ -195,23 +215,54 @@ const ssg = function() {
                 left: 0!important;
                 width: ${100 * unit.vw()}px!important;
             }
-            .ssg.page {
+            .ssg-page {
                 box-sizing: border-box!important;
                 height: ${100 * unit.vh()}px!important;
+            }
+            .ssg-child {
+                position: absolute;
+                top: 0;
+                height: ${100 * unit.vh()}px!important;
+                width: ${100 * unit.vw()}px!important;
+            }
+            .ssg-child.right {
+                left: ${100 * unit.vw()}px;
+            }
+            .ssg-child.left {
+                left: -${100 * unit.vw()}px;
             }
         `;
     };
 
     const applyTransition = function() {
-        let style = document.body.style;
-        style.transitionProperty = 'transform';
-        style.transitionDuration = transition.duration;
-        style.transitionTimingFunction = transition.function;
+        let apply = function(element) {
+            let style = element.style;
+            style.transitionProperty = 'transform';
+            style.transitionDuration = transition.duration;
+            style.transitionTimingFunction = transition.function;
+        }
+
+        apply(document.body);
+
+        // for .. of is appearantly not supported in IE
+        for (let i = 0; i <= max; i++) {
+            apply(pages[i]);
+        }
     }
 
     const applyStyle = function() {
         select('#ssgStyle').innerHTML = computeCSS();
     }
+
+    const handleResize = function(event) {
+        applyStyle();
+        setPage(current);
+        if (STATE.leftRevealed) {
+            revealLeft();
+        } else if (STATE.rightRevelaed) {
+            revealRight();
+        }
+    };
 
     const init = function() {
         window.pageYOffset = 0;
@@ -222,14 +273,14 @@ const ssg = function() {
         let style = create('style');
         style.setAttribute('id', 'ssgStyle');
         document.body.appendChild(style);
-        pages = selectAll('.ssg.page');
+        pages = selectAll('.ssg-page');
         max = pages.length-1;
 
         applyStyle();
         applyTransition();
         setPage(current);
 
-        window.addEventListener('resize', (event) => applyStyle());
+        window.addEventListener('resize', handleResize);
         document.addEventListener('wheel', handleWheel);
         document.addEventListener('keyup', handleKey);
         document.addEventListener('touchstart', handleTouch);
@@ -238,19 +289,19 @@ const ssg = function() {
     window.onload = init;
 
     return {
-        hasDown: hasDown,
-        hasUp: hasUp,
-        hasRight: hasRight,
-        hasLeft: hasLeft,
-
         scrollDown: scrollDown,
         scrollUp: scrollUp,
         scrollTo: scrollTo,
 
+        setPage: setPage,
+
         revealRight: revealRight,
         revealLeft: revealLeft,
+        conceal: conceal,
 
-        getCurrentPage: getCurrentPage,
+        getPage: getPage,
+        getPageIndex: getPageIndex,
+
         getTransitionDuration: getTransitionDuration,
         getTransitionFunction: getTransitionFunction,
 
