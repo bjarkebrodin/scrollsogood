@@ -47,22 +47,17 @@ const ssg = function() {
             console.error(`ssg error: page number ${page} out of bounds for [0;${maxPage}]`);
         };
 
-        // Todo: polyfill or rewrite
-        class SSGEvent extends CustomEvent {
-            constructor(from, to) {
-                super('ssg-scroll', {
-                    bubbles: true,
-                    cancelable: false,
-                });
-                this.sourcePage = pages[from];
-                this.targetPage = pages[to];
-                this.sourceIndx = from;
-                this.targetIndx = to;
-            }
-        }
-
         var dispatchEvent = function(from, to) {
-            pages[from].dispatchEvent(new SSGEvent(from,to));
+            pages[from].dispatchEvent(new CustomEvent('ssg-scroll', {
+                bubbles: true,
+                cancelable: false,
+                detail: {
+                    sourcePage: pages[from],
+                    targetPage: pages[to],
+                    sourceIndx: from,
+                    targetIndx: to
+                }
+            }));
         };
     }
 
