@@ -1,7 +1,7 @@
 
 # ScrollSoGood :coffee: :zap:
 
-A Javascript library for discrete scrolling. SSG lets you structure the content of your page, in full height/width sections that can be scrolled through in a discrete fashion. SSG allows each page to have optional child pages, these can be placed either to the left/right of the page itself, and brought into view through the provided API. Events of type `ssg-scroll` are provided when changing pages, see [Events](#Events). If anything is weird, out-of-place, or inconvenient, let me know or post an issue, and i will take a look at it as soon as time permits. Note that this is still a young library so any and all reaction is valuable and welcome :cheers:
+A Javascript library for discrete scrolling. SSG lets you structure the content of your page, in full height/width sections that can be scrolled through in a discrete fashion. SSG allows each page to have optional child pages, these can be placed either to the left/right of the page itself, and brought into view through the provided API. Events of type `ssg-scroll` are provided when changing pages, see [Events](#Events). If anything is weird, out-of-place, or inconvenient, let me know or post an issue, and i will take a look at it as soon as time permits. Note that this is still a young library so any and all reaction is valuable and welcome :beer:
 
 ## Usage
 
