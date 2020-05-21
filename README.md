@@ -1,7 +1,7 @@
 
 # ScrollSoGood :coffee: :zap:
 
-A Javascript library for discrete scrolling. SSG lets you structure the content of your page, in full height/width sections that can be scrolled through in a discrete fashion. SSG allows each page to have optional child pages, these can be placed either to the left/right of the page itself, and brought into view through the provided API. Events of type `ssg-scroll` are provided when changing pages, see [Events](#Events).
+A Javascript library for discrete scrolling. SSG lets you structure the content of your page, in full height/width sections that can be scrolled through in a discrete fashion. SSG allows each page to have optional child pages, these can be placed either to the left/right of the page itself, and brought into view through the provided API. Events of type `ssg-scroll` are provided when changing pages, see [Events](#Events). If anything is weird, out-of-place, or inconvenient, let me know or post an issue, and i will take a look at it as soon as time permits. Note that this is still a young library so any and all reaction is valuable and welcome :cheers:
 
 ## Usage
 
@@ -84,9 +84,22 @@ document.addEventListener('ssg-scroll', function(event) {
 ```
 
 ### Transition
-// Style
-get/setTransitionDuration()
-get/setTransitionFunction()
+
+If you wish to specify custom transition properties for animations, this can be done through below methods. 
+
+Method | Specification
+-|-
+`ssg.getTransitionDuration()` | Returns a string representing the transition duration, eg. `"1s"`
+`ssg.getTransitionFunction()` | Returns a string representing the transition function, eg. `"ease-in"`
+
+If you wish to use the default, or if it is otherwise convenient to you, these accessors are provided
+
+Method | Specification
+-|-
+`ssg.setTransitionDuration(time)` | Assigns time as the duration of the used transition, must be a stringified css version, eg `"1s"`.
+`ssg.setTransitionFunction(func)` | Assigns func as the timing function of the used transition, must be a stringified css version, eg `"ease-in"`.
+
+__NOTE__ that a timeout is used to prevent devices with accelerated scroll behaviour from firing many events in a single scroll action, thus there is an imposed barrier of ~1 second for how often a new page can be scrolled to - i am working on getting this timeout as low as possible - but it is a tricky problem. This __does not directly affect transitions__, but if you are expecting that setting the timing duration to 0 will make everything instant, it will not - the animation will be instant, but there will still be a timeout before the user can scroll again.
 
 
 ## Q&A

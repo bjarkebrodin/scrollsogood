@@ -94,16 +94,37 @@ const ssg = function() {
         current = pageNum;
     }
  
-    const setTransitionDuration = function(time) { transition.duration = time; };
-    const setTransitionFunction = function(func) { transition.function = func };
-    const getTransitionDuration = function() { return transition.duration; };
-    const getTransitionFunction = function() { return transition.function };
-    
-    const getPage = function() { return pages[current]; };
-    const getPageIndex = function() { return current; }; 
+    const setTransitionDuration = function(time) { 
+        transition.duration = time; 
+    };
 
-    const hasDown = function() { return current < max; };
-    const hasUp = function() { return current > 0; };
+    const setTransitionFunction = function(func) { 
+        transition.function = func 
+    };
+    
+    const getTransitionDuration = function() { 
+        return transition.duration; 
+    };
+    
+    const getTransitionFunction = function() { 
+        return transition.function 
+    };
+    
+    const getPage = function() { 
+        return pages[current]; 
+    };
+    
+    const getPageIndex = function() { 
+        return current; 
+    }; 
+
+    const hasDown = function() { 
+        return current < max; 
+    };
+    
+    const hasUp = function() { 
+        return current > 0; 
+    };
     
     const scrollDown = function() {
         if (current + 1 > max) {
