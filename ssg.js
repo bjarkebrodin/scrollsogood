@@ -77,8 +77,8 @@ const ssg = function() {
     let lock = false;
 
     const transition = {
-        duration: '.5s',
-        function: 'linear'
+        duration: '0.4s',
+        function: 'cubic-bezier(.85,.14,.37,.98)'
     };
 
     const setPage = function(pageNum) {
@@ -94,10 +94,10 @@ const ssg = function() {
         current = pageNum;
     }
  
-    const setTransitionDuration = function() { return 'setTransitionDuration'; };
-    const setTransitionFunction = function() { return 'setTransitionFunction'; };
-    const getTransitionDuration = function() { return 'getTransitionDuration'; };
-    const getTransitionFunction = function() { return 'getTransitionFunction'; };
+    const setTransitionDuration = function(time) { transition.duration = time; };
+    const setTransitionFunction = function(func) { transition.function = func };
+    const getTransitionDuration = function() { return transition.duration; };
+    const getTransitionFunction = function() { return transition.function };
     
     const getPage = function() { return pages[current]; };
     const getPageIndex = function() { return current; }; 
@@ -219,16 +219,18 @@ const ssg = function() {
                 box-sizing: border-box!important;
                 height: ${100 * unit.vh()}px!important;
             }
-            .ssg-child {
+            .ssg-child-right,
+            .ssg-child-left {
                 position: absolute;
                 top: 0;
                 height: ${100 * unit.vh()}px!important;
                 width: ${100 * unit.vw()}px!important;
+                overflow-y: scroll;
             }
-            .ssg-child.right {
+            .ssg-child-right {
                 left: ${100 * unit.vw()}px;
             }
-            .ssg-child.left {
+            .ssg-child-left {
                 left: -${100 * unit.vw()}px;
             }
         `;
