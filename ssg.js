@@ -30,6 +30,8 @@ References
     window.CustomEvent = CustomEvent;
 })();
 
+// Polyfill for custom classes, 
+
 const ssg = function() 
 {
     { // Block and hoist utils, just for IDE
@@ -60,9 +62,7 @@ const ssg = function()
         }
 
         var dispatchEvent = (from, to) => {
-            let event = new SSGEvent(from,to);
-            console.log(event)
-            pages[from].dispatchEvent(event);
+            pages[from].dispatchEvent(new SSGEvent(from,to));
         }
     }
 
