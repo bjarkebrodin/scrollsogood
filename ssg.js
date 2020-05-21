@@ -15,7 +15,7 @@ References
 */
 
 // Polyfill for custom events, thanks to [1]
-(() => {
+(function() {
     if ( typeof window.CustomEvent === "function" ) return false;
 
     function CustomEvent (event, params) {
@@ -32,22 +32,22 @@ References
 
 // Polyfill for custom classes, 
 
-const ssg = function() 
-{
+const ssg = function() {
     { // Block and hoist utils, just for IDE
-        var select = (query) => document.querySelector(query);
-        var selectAll = (query) => document.querySelectorAll(query);
-        var create = (tagName) => document.createElement(tagName);
+        var select = function(query) { return document.querySelector(query); };
+        var selectAll = function(query) { return document.querySelectorAll(query); };
+        var create = function(tagName) { return document.createElement(tagName); };
 
         var unit = {
-            vh: () => window.innerHeight/100,
-            vw: () => window.innerWidth/100
+            vh: function(){ return window.innerHeight/100; },
+            vw: function(){ return window.innerWidth/100; }
         };
 
-        var outOfBoundsErr = (page, maxPage) => {
+        var outOfBoundsErr = function(page, maxPage) {
             console.error(`ssg error: page number ${page} out of bounds for [0;${maxPage}]`);
-        }
+        };
 
+        // Todo: polyfill or rewrite
         class SSGEvent extends CustomEvent {
             constructor(from, to) {
                 super('ssg-scroll', {
@@ -61,9 +61,9 @@ const ssg = function()
             }
         }
 
-        var dispatchEvent = (from, to) => {
+        var dispatchEvent = function(from, to) {
             pages[from].dispatchEvent(new SSGEvent(from,to));
-        }
+        };
     }
 
     const TIMEOUT = 800;
@@ -81,7 +81,7 @@ const ssg = function()
         function: 'linear'
     };
 
-    const setPage = (pageNum) => {
+    const setPage = function(pageNum) {
         if (pageNum > max || pageNum < 0) {
             outOfBoundsErr(pageNum, max);
             return;
@@ -94,19 +94,19 @@ const ssg = function()
         current = pageNum;
     }
  
-    const setTransitionDuration = () => 'setTransitionDuration';
-    const setTransitionFunction = () => 'setTransitionFunction';
-    const getTransitionDuration = () => 'getTransitionDuration';
-    const getTransitionFunction = () => 'getTransitionFunction';
+    const setTransitionDuration = function() { return 'setTransitionDuration'; };
+    const setTransitionFunction = function() { return 'setTransitionFunction'; };
+    const getTransitionDuration = function() { return 'getTransitionDuration'; };
+    const getTransitionFunction = function() { return 'getTransitionFunction'; };
     
-    const getCurrentPage = () => current;
+    const getCurrentPage = function() { return current; };
     
-    const hasDown = () => current < max;
-    const hasUp = () => current > 0;
-    const hasRight = () => 'hasRight';
-    const hasLeft = () => 'hasLeft';
+    const hasDown = function() { return current < max; };
+    const hasUp = function() { return current > 0; };
+    const hasRight = function() { return 'hasRight'; };
+    const hasLeft = function() { return 'hasLeft'; };
     
-    const scrollDown = () => {
+    const scrollDown = function() {
         if (current + 1 > max) {
             outOfBoundsErr(current + 1, max);
             return;
@@ -118,19 +118,19 @@ const ssg = function()
         dispatchEvent(current-1, current);
     };
 
-    const scrollUp = () => {
+    const scrollUp = function() {
         if (current - 1 < 0) {
             outOfBoundsErr(current - 1, max);
             return;
         }
 
         lock = true;
-        setTimeout(() => lock=false, TIMEOUT);
+        setTimeout(function() { lock=false; }, TIMEOUT);
         scrollTo(--current);
         dispatchEvent(current+1, current);
     };
 
-    const scrollTo = (pageNum) => {
+    const scrollTo = function(pageNum) {
         if (pageNum > max || pageNum < 0) {
             outOfBoundsErr(pageNum, max);
             return;
@@ -139,42 +139,47 @@ const ssg = function()
         document.body.style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
     };
 
-    const revealRight = () => 'scrollRight';
-    const revealLeft = () => 'scrollLeft';
+    const revealRight = function() { return 'scrollRight'; };
+    const revealLeft = function() { return 'scrollLeft'; };
 
-    const handleWheel = (event) => {
+    const handleWheel = function(event) {
         event.stopPropagation();
 
         // Todo: handle special scroll types like mac etc
-        if (lock) return;
-        if (event.deltaY > 0 && hasDown()) 
+        if (lock) { return; }
+
+        if (event.deltaY > 0 && hasDown()) {
             scrollDown();
-        else if (event.deltaY < 0 && hasUp())
+        } else if (event.deltaY < 0 && hasUp()) {
             scrollUp();
+        }
     };
 
-    const handleKey = (event) => {
-
-        if (lock) return;
+    const handleKey = function(event) {
+        if (lock) { return; }
         let key = event.which;
-        if (UP_KEYS.includes(key) && hasUp())
+
+        if (UP_KEYS.includes(key) && hasUp()) {
             scrollUp();
-        else if (DOWN_KEYS.includes(key) && hasDown())
+        } else if (DOWN_KEYS.includes(key) && hasDown()) {
             scrollDown();
+        }
     };
 
-    const handleTouch = (event) => {
+    const handleTouch = function(event) {
         event.stopPropagation();
 
         let startY = event.touches[0].screenY;
         
         function handleSwipe(evt) {
-            if (lock) return;
+            if (lock) { return; }
             let deltaY = evt.touches[0].screenY - startY;
-            if (deltaY > TOUCH_SENSITIVITY && hasUp())
+
+            if (deltaY > TOUCH_SENSITIVITY && hasUp()) {
                 scrollUp();
-            else if (deltaY < -TOUCH_SENSITIVITY && hasDown())
+            } else if (deltaY < -TOUCH_SENSITIVITY && hasDown()) {
                 scrollDown();
+            }
 
             document.removeEventListener('touchmove', handleSwipe);
         };
@@ -182,36 +187,38 @@ const ssg = function()
         document.addEventListener('touchmove', handleSwipe);
     }
 
-    const computeCSS = () => `
-        html, body {
-            margin: 0!important;
-            padding: 0!important;
-            overflow: hidden!important;
-        }
-        body {
-            position: fixed!important;
-            top: 0!important;
-            left: 0!important;
-            width: ${100 * unit.vw()}px!important;
-        }
-        .ssg.page {
-            box-sizing: border-box!important;
-            height: ${100 * unit.vh()}px!important;
-        }
-    `;
+    const computeCSS = function (){ 
+        return `
+            html, body {
+                margin: 0!important;
+                padding: 0!important;
+                overflow: hidden!important;
+            }
+            body {
+                position: fixed!important;
+                top: 0!important;
+                left: 0!important;
+                width: ${100 * unit.vw()}px!important;
+            }
+            .ssg.page {
+                box-sizing: border-box!important;
+                height: ${100 * unit.vh()}px!important;
+            }
+        `;
+    };
 
-    const applyTransition = () => {
+    const applyTransition = function() {
         let style = document.body.style;
         style.transitionProperty = 'transform';
         style.transitionDuration = transition.duration;
         style.transitionTimingFunction = transition.function;
     }
 
-    const applyStyle = () => {
+    const applyStyle = function() {
         select('#ssgStyle').innerHTML = computeCSS();
     }
 
-    const init = () => {
+    const init = function() {
         window.pageYOffset = 0;
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
