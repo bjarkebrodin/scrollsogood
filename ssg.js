@@ -118,6 +118,10 @@ const ssg = function() {
         return current; 
     }; 
 
+    const getPages = function() {
+        return pages;
+    }
+
     const hasDown = function() { 
         return current < max; 
     };
@@ -309,7 +313,9 @@ const ssg = function() {
         document.addEventListener('touchstart', handleTouch);
     };
     
-    window.onload = init;
+    window.addEventListener('DOMContentLoaded', function(event) {
+        init();
+    });
 
     return {
         scrollDown: scrollDown,
@@ -324,6 +330,7 @@ const ssg = function() {
 
         getPage: getPage,
         getPageIndex: getPageIndex,
+        getPages: getPages,
 
         getTransitionDuration: getTransitionDuration,
         getTransitionFunction: getTransitionFunction,

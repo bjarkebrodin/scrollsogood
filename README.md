@@ -55,6 +55,7 @@ Method | Specification
 -|-
 `ssg.getPage()` | Returns the object representing the current page
 `ssg.getPageIndex()` | Returns the index of the current page (starting from 0 heh)
+`ssg.getPages()`| Returns an array containing all the pages in order
 
 ### Horizontal Navigation
 
