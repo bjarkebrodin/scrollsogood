@@ -5,31 +5,33 @@ A Javascript library for discrete scrolling. SSG lets you structure the content 
 
 ## Usage
 
-Must have viewport tag defined needs complete control over <body>, <html> and `ssg-page` element positioning, size and transform properties. Content can be placed to the left or the right of an element, by using the `ssg-child` class. For reference see below example or the demo.
+Must have viewport tag defined needs complete control over <body>, <html>, `#ssg-container` and `.ssg-page` element positioning, size and transform properties. Content can be placed to the left or the right of an element, by using the `ssg-child` class. For reference see below example or the demo.
 
 ```html
 <body>
-    <div class="ssg-page">
-        Page 1
+    <div id="ssg-container">
+        <div class="ssg-page">
+            Page 1
 
-        <button onclick="revealLeft()"> left </button>
-        <button onclick="revealRight()"> right </button>
+            <button onclick="revealLeft()"> left </button>
+            <button onclick="revealRight()"> right </button>
 
-        <div class="ssg-child-left"> 
-            <!-- This is hidden -->
-            <button onclick="conceal()"> back </button>
+            <div class="ssg-child-left"> 
+                <!-- This is hidden -->
+                <button onclick="conceal()"> back </button>
+            </div>
+
+            <div class="ssg-child-right"> 
+                <!-- This is hidden -->
+                <button onclick="conceal()"> back </button>
+            </div>
         </div>
 
-        <div class="ssg-child-right"> 
-            <!-- This is hidden -->
-            <button onclick="conceal()"> back </button>
+        <div class="ssg-page">
+            Page 2
         </div>
+        <!-- ... -->
     </div>
-
-    <div class="ssg-page">
-        Page 2
-    </div>
-    <!-- ... -->
 </body>
 ```
 

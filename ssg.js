@@ -87,9 +87,9 @@ const ssg = function() {
             return;
         } 
 
-        select('#ssg-container').style.transitionDuration = '0s';
-        select('#ssg-container').style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
-        select('#ssg-container').style.transitionDuration = transition.duration;
+        document.body.style.transitionDuration = '0s';
+        document.body.style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
+        document.body.style.transitionDuration = transition.duration;
         
         current = pageNum;
     }
@@ -156,7 +156,7 @@ const ssg = function() {
             return;
         }
 
-        select('#ssg-container').style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
+        document.body.style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
     };
 
     const revealRight = function() { 
@@ -225,12 +225,12 @@ const ssg = function() {
 
     const computeCSS = function (){ 
         return `
-            html, body, #ssg-container {
+            html, body {
                 margin: 0!important;
                 padding: 0!important;
                 overflow: hidden!important;
             }
-            #ssg-container {
+            body {
                 position: fixed!important;
                 top: 0!important;
                 left: 0!important;
@@ -239,7 +239,6 @@ const ssg = function() {
             .ssg-page {
                 box-sizing: border-box!important;
                 height: ${100 * unit.vh()}px!important;
-                overflow: hidden!important;
             }
             .ssg-child-right,
             .ssg-child-left {
@@ -266,7 +265,7 @@ const ssg = function() {
             style.transitionTimingFunction = transition.function;
         }
 
-        apply(select('#ssg-container'));
+        apply(document.body);
 
         // for .. of is appearantly not supported in IE
         for (let i = 0; i <= max; i++) {
