@@ -29,12 +29,16 @@ body
     @include color($bg3, $fg3)
 
 header
+  font-family: $displayFont
+  text-transform: lowercase
+
   h1
-    font-family: $displayFont
-    text-transform: lowercase
     text-align: center
     margin: 0
     font-size: 4rem
+
+  p
+    font-size: .8rem
 
 .maximized
   height: 100%

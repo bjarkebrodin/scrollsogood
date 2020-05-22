@@ -16,12 +16,17 @@ body.p3 {
   color: #ffffff;
 }
 
-header h1 {
+header {
   font-family: "Major Mono Display";
   text-transform: lowercase;
+}
+header h1 {
   text-align: center;
   margin: 0;
   font-size: 4rem;
+}
+header p {
+  font-size: 0.8rem;
 }
 
 .maximized {
