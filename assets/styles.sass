@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&display=swap')
+  
+$bodyFont: 'Noto Sans JP'
+$displayFont: 'Major Mono Display'
+
+$bg1: #1d1d1d
+$bg2: #ffffff
+$bg3: #1d1d1d
+
+$fg1: #ffffff
+$fg2: #1d1d1d
+$fg3: #ffffff
+
+@mixin color($bg, $fg)
+  background-color: $bg
+  color: $fg
+
+body
+  font-family: $bodyFont
+
+  &.p1 
+    @include color($bg1, $fg1)
+  
+  &.p2
+    @include color($bg2, $fg2)
+
+  &.p3
+    @include color($bg3, $fg3)
+
+header
+  font-family: $displayFont
+  text-transform: lowercase
+  
+  h1
+    text-align: center
+    margin: 0
+    font-size: 4rem
+
+.maximized
+  height: 100%
+  width: 100%
+
+.flx
+  display: flex
+
+.v
+  flex-direction: column
+
+.h
+  flex-direction: row
+
+.centered
+  justify-content: center
+  align-items: center
+
+.distributed
+  justify-content: space-between
+  align-items: center
+
+.scroll-signifier
+  margin-top: -15vh
+  height: 15vh
+  animation: bounce 1.75s linear 0s infinite
+
+.down-arrow
+  cursor: pointer
+  background: none
+  border: none
+  color: inherit
+  height: 100%
+  width: 100%
+  font-family: $bodyFont
+  
+  &::after
+    display: block
+    content: ""
+    width: 0 
+    height: 0
+    margin: 0 auto
+    margin-top: 10px
+    border-left: 5px solid transparent
+    border-right: 5px solid transparent
+    border-top: 5px solid white
+
+
+@keyframes bounce
+  0% 
+    margin-top: -15vh
+  50%
+    margin-top: -16vh
+  100%
+    margin-top: -15vh
