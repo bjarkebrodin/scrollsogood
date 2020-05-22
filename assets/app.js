@@ -32,4 +32,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
         let pageNum = event.detail.targetIndx;
         applyPageStyles(pageNum+1);
     });
+
+    let title = document.querySelector('h1');
+    title.style.transitionProperty = 'all';
+    title.style.transitionDuration = ssg.getTransitionDuration();
+    title.style.transitionDelay = '.75s';
+    title.style.transitionTimingFunction = ssg.getTransitionFunction();
+    title.style.fontSize = '4rem';
+    title.style.color = '#fefefe';
 });

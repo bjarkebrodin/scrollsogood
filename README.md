@@ -7,6 +7,8 @@ A Javascript library for discrete scrolling. SSG lets you structure the content 
 
 Must have viewport tag defined needs complete control over <body>, <html>, `#ssg-container` and `.ssg-page` element positioning, size and transform properties. Content can be placed to the left or the right of an element, by using the `ssg-child` class. For reference see below example or the demo.
 
+Pages do not have to be `div` elements and can be grouped semantically, but if sizing/padding/margin/position is modified bad stuff happens. So it is fine to put a bunch of pages in a `main` for example, but don't give that `main` margin or padding - and don't put sized content in between pages.
+
 ```html
 <body>
     <div id="ssg-container">

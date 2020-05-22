@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;800&display=swap')
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&display=swap')
   
-$bodyFont: 'Noto Sans JP'
+$bodyFont: 'Raleway'
 $displayFont: 'Major Mono Display'
 
-$bg1: #1d1d1d
-$bg2: #ffffff
+$bg1: #2F323A
+$bg2: #BD632F
 $bg3: #1d1d1d
 
-$fg1: #ffffff
+$fg1: #fefefe
 $fg2: #1d1d1d
 $fg3: #ffffff
 
@@ -29,15 +30,22 @@ body
     @include color($bg3, $fg3)
 
 header
-  font-family: $displayFont
+  font-family: $bodyFont
   text-transform: lowercase
 
   h1
     text-align: center
     margin: 0
-    font-size: 4rem
+    font-weight: 300
+    
+    span
+      font-size: 4rem
+      text-transform: uppercase
+      color: $fg1
+      font-weight: 900
 
   p
+    font-family: $displayFont
     font-size: .8rem
 
 .maximized
@@ -98,11 +106,21 @@ header
     margin: 5px 0
     width: 10px
     height: 10px
-    background-color: white
-    border: 1px solid black
 
     &.active
       width: 20px
+
+.p1
+  .scrolltick
+    @include color($fg1, $bg1)
+  
+.p2
+  .scrolltick
+    @include color($fg2, $bg2)
+
+.p3
+  .scrolltick
+    @include color($fg3, $bg3)
 
 @keyframes bounce
   0% 
