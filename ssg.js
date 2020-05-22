@@ -87,9 +87,9 @@ const ssg = function() {
             return;
         } 
 
-        document.body.style.transitionDuration = '0s';
-        document.body.style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
-        document.body.style.transitionDuration = transition.duration;
+        select('#ssg-container').style.transitionDuration = '0s';
+        select('#ssg-container').style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
+        select('#ssg-container').style.transitionDuration = transition.duration;
         
         current = pageNum;
     }
@@ -113,6 +113,10 @@ const ssg = function() {
     const getPage = function() { 
         return pages[current]; 
     };
+
+    const getPages = function() {
+        return pages;
+    }
     
     const getPageIndex = function() { 
         return current; 
@@ -156,7 +160,7 @@ const ssg = function() {
             return;
         }
 
-        document.body.style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
+        select('#ssg-container').style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
     };
 
     const revealRight = function() { 
@@ -225,12 +229,12 @@ const ssg = function() {
 
     const computeCSS = function (){ 
         return `
-            html, body {
+            html, body, #ssg-container {
                 margin: 0!important;
                 padding: 0!important;
                 overflow: hidden!important;
             }
-            body {
+            #ssg-container {
                 position: fixed!important;
                 top: 0!important;
                 left: 0!important;
@@ -265,7 +269,7 @@ const ssg = function() {
             style.transitionTimingFunction = transition.function;
         }
 
-        apply(document.body);
+        apply(select('#ssg-container'));
 
         // for .. of is appearantly not supported in IE
         for (let i = 0; i <= max; i++) {
@@ -309,7 +313,9 @@ const ssg = function() {
         document.addEventListener('touchstart', handleTouch);
     };
     
-    window.onload = init;
+    window.addEventListener('DOMContentLoaded', function(event) {
+        init();
+    });
 
     return {
         scrollDown: scrollDown,
@@ -324,6 +330,7 @@ const ssg = function() {
 
         getPage: getPage,
         getPageIndex: getPageIndex,
+        getPages: getPages,
 
         getTransitionDuration: getTransitionDuration,
         getTransitionFunction: getTransitionFunction,
