@@ -29,10 +29,9 @@ body
     @include color($bg3, $fg3)
 
 header
-  font-family: $displayFont
-  text-transform: lowercase
-  
   h1
+    font-family: $displayFont
+    text-transform: lowercase
     text-align: center
     margin: 0
     font-size: 4rem
@@ -83,6 +82,18 @@ header
     border-right: 5px solid transparent
     border-top: 5px solid white
 
+#scrollbar
+  position: fixed
+  left: 0
+  top: 0
+  height: 100vh
+  width: 50px
+
+  .scrolltick
+    margin: 5px 0
+    width: 10px
+    height: 10px
+    background-color: white
 
 @keyframes bounce
   0% 
