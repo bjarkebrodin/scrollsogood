@@ -2,10 +2,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
     ssg.setTransitionDuration = '.5s';
 
     let scrollbar = document.querySelector('#scrollbar');
+    let scrollTicks = [];
     for (let i = 0; i < ssg.getPages().length; i++) {
         let scrollbarTick = document.createElement('div');
         scrollbarTick.className = 'scrolltick';
+        scrollbarTick.style.transitionProperty = 'width';
+        scrollbarTick.style.transitionDuration = ssg.getTransitionDuration();
+        scrollbarTick.style.transitionTimingFunction = ssg.getTransitionFunction();
         scrollbar.appendChild(scrollbarTick);
+        scrollTicks.push(scrollbarTick);
     }
 
     let applyPageStyles = (i) => {
@@ -13,6 +18,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
         document.body.style.transitionProperty = 'all';
         document.body.style.transitionDuration = ssg.getTransitionDuration();
         document.body.style.transitionTimingFunction = ssg.getTransitionFunction();
+
+        for(let tick of scrollTicks) {
+            if (tick.className.indexOf('active') != -1) {
+                tick.classList.remove('active');
+            }
+        }
+        scrollTicks[i-1].classList.add('active');
     };
 
     applyPageStyles(1);

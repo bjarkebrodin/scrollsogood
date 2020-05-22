@@ -79,8 +79,9 @@ header h1 {
 }
 
 #scrollbar {
+  align-items: flex-start;
   position: fixed;
-  left: 0;
+  left: 10px;
   top: 0;
   height: 100vh;
   width: 50px;
@@ -90,6 +91,10 @@ header h1 {
   width: 10px;
   height: 10px;
   background-color: white;
+  border: 1px solid black;
+}
+#scrollbar .scrolltick.active {
+  width: 20px;
 }
 
 @keyframes bounce {
