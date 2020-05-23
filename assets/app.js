@@ -6,7 +6,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     for (let i = 0; i < ssg.getPages().length; i++) {
         let scrollbarTick = document.createElement('div');
         scrollbarTick.className = 'scrolltick';
-        scrollbarTick.style.transitionProperty = 'width';
+        scrollbarTick.style.transitionProperty = 'all';
         scrollbarTick.style.transitionDuration = ssg.getTransitionDuration();
         scrollbarTick.style.transitionTimingFunction = ssg.getTransitionFunction();
         scrollbar.appendChild(scrollbarTick);
@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let title = document.querySelector('h1');
     title.style.transitionProperty = 'all';
     title.style.transitionDuration = ssg.getTransitionDuration();
-    title.style.transitionDelay = '.75s';
+    title.style.transitionDelay = '.5s';
     title.style.transitionTimingFunction = ssg.getTransitionFunction();
     title.style.fontSize = '4rem';
     title.style.color = '#fefefe';

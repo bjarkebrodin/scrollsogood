@@ -14,6 +14,11 @@ References
 
 */
 
+// TODO: touch is still iffy - especially missing reload on samsung drag on long drag up from first page
+// TODO: make *long* swipe up refresh or default on first page
+// TODO: Improve touch detection by adding touch module
+// TODO: Polyfill classes and thus improve events - implement conceal/reveal and page-shown events
+
 // Polyfill for custom events, thanks to [1]
 (function() {
     if ( typeof window.CustomEvent === "function" ) return false;
@@ -29,8 +34,6 @@ References
 
     window.CustomEvent = CustomEvent;
 })();
-
-// Polyfill for custom classes, 
 
 const ssg = function() {
     { // Block and hoist utils, just for IDE

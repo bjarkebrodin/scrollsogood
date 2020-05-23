@@ -47,6 +47,14 @@ header
   p
     font-family: $displayFont
     font-size: .8rem
+    animation: colorize .5s linear 1s 1 forwards
+
+@keyframes colorize
+  from
+    color: transparent
+  to
+    color: $fg1
+    
 
 .maximized
   height: 100%
@@ -99,7 +107,7 @@ header
   position: fixed
   left: 10px
   top: 0
-  height: 100vh
+  height: 100%
   width: 50px
 
   .scrolltick
