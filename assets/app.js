@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-    ssg.setTransitionDuration = '.5s';
+    ssg.setTransitionDuration = '.2s';
 
     let scrollbar = document.querySelector('#scrollbar');
     let scrollTicks = [];
@@ -29,7 +29,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     applyPageStyles(1);
     document.addEventListener('ssg-scroll', (event) => {
-        let pageNum = event.detail.targetIndx;
+        let pageNum = event.targetIndex;
         applyPageStyles(pageNum+1);
     });
 
@@ -41,3 +41,30 @@ window.addEventListener('DOMContentLoaded', (event) => {
     title.style.fontSize = '4rem';
     title.style.color = '#fefefe';
 });
+
+function SSGEvent(type, from, to) {
+    let params = {
+        bubbles: true,
+        cancelable: false,
+        detail: null
+    };
+
+    let self = Reflect.construct(CustomEvent, [type, params], this.constructor);
+
+    self.from = from;
+    self.to = to;
+
+    return self;
+}
+
+SSGEvent.prototype = Object.create(CustomEvent.prototype);
+SSGEvent.prototype.constructor = SSGEvent;
+Object.setPrototypeOf(SSGEvent, CustomEvent);
+
+var emmit = () => {
+    var e = new SSGEvent('ssg', 1, 2);
+    console.log(e)
+    document.body.dispatchEvent(e);
+};
+
+window.addEventListener('ssg', (e) => console.log(e));

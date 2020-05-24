@@ -5,7 +5,7 @@ A Javascript library for discrete scrolling. SSG lets you structure the content 
 
 ## Usage
 
-Must have viewport tag defined needs complete control over <body>, <html>, `#ssg-container` and `.ssg-page` element positioning, size and transform properties. Content can be placed to the left or the right of an element, by using the `ssg-child` class. For reference see below example or the demo.
+Must have viewport tag defined - needs complete control over `body`, `html`, `#ssg-container` and `.ssg-page` element positioning, size and transform properties. Content can be placed to the left or the right of an element, by using the `ssg-child` class. For reference see below example or the demo.
 
 Pages do not have to be `div` elements and can be grouped semantically, but if sizing/padding/margin/position is modified bad stuff happens. So it is fine to put a bunch of pages in a `main` for example, but don't give that `main` margin or padding - and don't put sized content in between pages.
 
@@ -56,8 +56,8 @@ Method | Specification | Transition
 Method | Specification
 -|-
 `ssg.getPage()` | Returns the object representing the current page
-`ssg.getPageIndex()` | Returns the index of the current page (starting from 0 heh)
 `ssg.getPages()`| Returns an array containing all the pages in order
+`ssg.getIndex()` | Returns the index of the current page (starting from 0 heh)
 
 ### Horizontal Navigation
 
@@ -75,10 +75,10 @@ When the page is scrolled vertically a custom event is fired. This event has the
 
 ```javascript
 document.addEventListener('ssg-scroll', function(event) {
-    let srcPageNum = event.detail.sourceIndx+1;
-    let targetPageNum = event.detail.targetIndx+1;
-    let srcPage = event.detail.sourcePage;
-    let targetPage = event.detail.targetPage;
+    let srcPageNum = event.sourceIndex+1;
+    let targetPageNum = event.targetIndex+1;
+    let srcPage = event.srcPage;
+    let targetPage = event.targetPage;
 
     console.log(`Hey we just scrolled a page!`);
     console.log(`We were at page number ${srcPageNum}, which was this node :`);

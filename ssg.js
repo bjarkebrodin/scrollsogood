@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 ScrollSoGood - (ssg)
 
@@ -36,6 +38,16 @@ References
 })();
 
 const ssg = function() {
+    const TIMEOUT = 800;
+    const TOUCH_SENSITIVITY = 5;
+    const UP_KEYS = [37, 38];
+    const DOWN_KEYS = [39, 40];
+
+    let pages;
+    let current = 0;
+    let max = 0;
+    let lock = false;
+
     { // Block and hoist utils, just for IDE
         var select = function(query) { return document.querySelector(query); };
         var selectAll = function(query) { return document.querySelectorAll(query); };
@@ -46,38 +58,35 @@ const ssg = function() {
             vw: function(){ return window.innerWidth/100; }
         };
 
-        var outOfBoundsErr = function(page, maxPage) {
-            console.error(`ssg error: page number ${page} out of bounds for [0;${maxPage}]`);
+        var outOfBoundsErr = function(pageNum) {
+            console.error(`ssg error: page number ${pageNum} out of bounds for [0;${max}]`);
         };
 
-        var dispatchEvent = function(from, to) {
-            pages[from].dispatchEvent(new CustomEvent('ssg-scroll', {
-                bubbles: true,
-                cancelable: false,
-                detail: {
-                    sourcePage: pages[from],
-                    targetPage: pages[to],
-                    sourceIndx: from,
-                    targetIndx: to
-                }
-            }));
+        { // Specialization of CustomEvent, wtb es6 support </3
+            var SSGEvent = function(type, from, to) {
+                let params = {
+                    bubbles: true,
+                    cancelable: false,
+                    detail: null
+                };
+                let self = Reflect.construct(CustomEvent, [type, params], this.constructor);
+            
+                self.srcIndex = from;
+                self.targetIndex = to;
+                self.srcPage = pages[from];
+                self.targetPageIndex = pages[to];
+
+                return self;
+            }
+            SSGEvent.prototype = Object.create(CustomEvent.prototype);
+            SSGEvent.prototype.constructor = SSGEvent;
+            Object.setPrototypeOf(SSGEvent, CustomEvent);
+        }
+
+        var dispatchScrollEvent = function(from, to) {
+            pages[from].dispatchEvent(new SSGEvent('ssg-scroll', from, to));
         };
     }
-
-    const STATE = {
-        leftRevealed: false,
-        rightRevealed: false
-    };
-
-    const TIMEOUT = 800;
-    const TOUCH_SENSITIVITY = 5;
-    const UP_KEYS = [37, 38];
-    const DOWN_KEYS = [39, 40];
-
-    let pages;
-    let current = 0;
-    let max = 0;
-    let lock = false;
 
     const transition = {
         duration: '0.4s',
@@ -117,7 +126,7 @@ const ssg = function() {
         return pages[current]; 
     };
     
-    const getPageIndex = function() { 
+    const getIndex = function() { 
         return current; 
     }; 
 
@@ -135,31 +144,31 @@ const ssg = function() {
     
     const scrollDown = function() {
         if (current + 1 > max) {
-            outOfBoundsErr(current + 1, max);
+            outOfBoundsErr(current + 1);
             return;
         }
 
         lock = true;
         setTimeout(() => lock=false, TIMEOUT);
         scrollTo(++current);
-        dispatchEvent(current-1, current);
+        dispatchScrollEvent(current-1, current);
     };
 
     const scrollUp = function() {
         if (current - 1 < 0) {
-            outOfBoundsErr(current - 1, max);
+            outOfBoundsErr(current - 1);
             return;
         }
 
         lock = true;
         setTimeout(function() { lock=false; }, TIMEOUT);
         scrollTo(--current);
-        dispatchEvent(current+1, current);
+        dispatchScrollEvent(current+1, current);
     };
 
     const scrollTo = function(pageNum) {
         if (pageNum > max || pageNum < 0) {
-            outOfBoundsErr(pageNum, max);
+            outOfBoundsErr(pageNum);
             return;
         }
 
@@ -168,20 +177,16 @@ const ssg = function() {
 
     const revealRight = function() { 
         pages[current].style.transform = `translateX(-${100 * unit.vw()}px)`;
-        STATE.rightRevealed = true;
         lock = true;
     };
 
     const revealLeft = function() { 
         pages[current].style.transform = `translateX(${100 * unit.vw()}px)`;
-        STATE.leftRevealed = true;
         lock = true;
     };
 
     const conceal = function() {
         pages[current].style.transform = `translateX(0px)`;
-        STATE.leftRevealed = false;
-        STATE.rightRevealed = false;
         lock = false;
     }
 
@@ -316,10 +321,8 @@ const ssg = function() {
         document.addEventListener('touchstart', handleTouch);
     };
     
-    window.addEventListener('DOMContentLoaded', function(event) {
-        init();
-    });
-
+    window.addEventListener('DOMContentLoaded', init);
+    
     return {
         scrollDown: scrollDown,
         scrollUp: scrollUp,
@@ -332,7 +335,7 @@ const ssg = function() {
         conceal: conceal,
 
         getPage: getPage,
-        getPageIndex: getPageIndex,
+        getIndex: getIndex,
         getPages: getPages,
 
         getTransitionDuration: getTransitionDuration,
