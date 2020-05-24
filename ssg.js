@@ -16,10 +16,8 @@ References
 
 */
 
-// TODO: touch is still iffy - especially missing reload on samsung drag on long drag up from first page
-// TODO: make *long* swipe up refresh or default on first page
-// TODO: Improve touch detection by adding touch module
-// TODO: Polyfill classes and thus improve events - implement conceal/reveal and page-shown events
+// TODO: signify *long* swipe up refresh or default on first page
+// TODO: Consider implementing conceal/reveal and page-shown events
 
 // Polyfill for custom events, thanks to [1]
 (function() {
@@ -55,7 +53,7 @@ const ssg = function() {
     let current = 0;
     let max = 0;
     let lock = false;
-    let state = '';
+    let revealed = '';
 
     { // Block and hoist utils, just for IDE
         var select = function(query) { return document.querySelector(query); };
@@ -110,8 +108,8 @@ const ssg = function() {
 
         removeTransition();
         scrollTo(pageNum);
-        if ( state === 'left' ) revealLeft();
-        else if ( state === 'right' ) revealRight();
+        if ( revealed === 'left' ) revealLeft();
+        else if ( revealed === 'right' ) revealRight();
         applyTransition();
     }
  
@@ -187,19 +185,19 @@ const ssg = function() {
 
     const revealRight = function() { 
         pages[current].style.transform = `translateX(-${100 * unit.vw()}px)`;
-        state = 'right';
+        revealed = 'right';
         lock = true;
     };
 
     const revealLeft = function() { 
         pages[current].style.transform = `translateX(${100 * unit.vw()}px)`;
-        state = 'left';
+        revealed = 'left';
         lock = true;
     };
 
     const conceal = function() {
         pages[current].style.transform = `translateX(0px)`;
-        state = '';
+        revealed = '';
         lock = false;
     }
 
