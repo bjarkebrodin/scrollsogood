@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSG Test</title>
+  <script src="../ssg.js"></script>
+</head>
+<body>
+  <div id="ssg-container">
+    <div class="ssg-page">1</div>
+    <div class="ssg-page">2</div>
+    <div class="ssg-page">3</div>
+    <div class="ssg-page">4</div>
+  </div>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      testPageTracking();
+      testLastPage();
+    });
+
+    function testPageTracking() {
+      for (let i = 0; ++i <= 3;) ssg.scrollDown();
+      ssg.scrollUp();
+      if (console.assert(testPageTracking, ssg.getIndex(), 2))
+        pass.call(testPageTracking);
+    }
+
+    function testLastPage() {
+      ssg.setPage(0);
+      for (let i = 0; ++i <= 10;) ssg.scrollDown();
+      if (assertEquals.call(testLastPage, ssg.getIndex(), ssg.getPages().length-1))
+        pass.call(testLastPage);
+    }
+
+    function assertEquals(actual, expected) {
+      if (actual === expected) return true;
+      console.error(`FAILED ${this.name}\n actual: ${actual}, expected: ${expected}`);
+      return false;
+    }
+
+    function pass() {
+      console.log(`passed ${this.name}`);
+    }
+  </script>
+</body>
+</html>

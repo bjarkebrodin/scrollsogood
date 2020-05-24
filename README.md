@@ -75,7 +75,7 @@ When the page is scrolled vertically a custom event is fired. This event has the
 
 ```javascript
 document.addEventListener('ssg-scroll', function(event) {
-    let srcPageNum = event.sourceIndex+1;
+    let srcPageNum = event.srcIndex+1;
     let targetPageNum = event.targetIndex+1;
     let srcPage = event.srcPage;
     let targetPage = event.targetPage;

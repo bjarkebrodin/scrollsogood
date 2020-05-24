@@ -38,8 +38,14 @@ References
 })();
 
 const ssg = function() {
+    const CONTAINER_SYMBOL = '#ssg-container';
+    const PAGE_SYMBOL = '.ssg-page';
+    const L_CHILD_SYMBOL = '.ssg-child-left';
+    const R_CHILD_SYMBOL = '.ssg-child-right';
+
     const TIMEOUT = 800;
-    const TOUCH_SENSITIVITY = 5;
+    const TOUCH_SENSITIVITY = 10;
+    const LONG_SWIPE = 25;
     const UP_KEYS = [37, 38];
     const DOWN_KEYS = [39, 40];
 
@@ -47,6 +53,7 @@ const ssg = function() {
     let current = 0;
     let max = 0;
     let lock = false;
+    let state = '';
 
     { // Block and hoist utils, just for IDE
         var select = function(query) { return document.querySelector(query); };
@@ -99,11 +106,11 @@ const ssg = function() {
             return;
         } 
 
-        select('#ssg-container').style.transitionDuration = '0s';
-        select('#ssg-container').style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
-        select('#ssg-container').style.transitionDuration = transition.duration;
-        
-        current = pageNum;
+        removeTransition();
+        scrollTo(pageNum);
+        if ( state === 'left' ) revealLeft();
+        else if ( state === 'right' ) revealRight();
+        applyTransition();
     }
  
     const setTransitionDuration = function(time) { 
@@ -172,21 +179,25 @@ const ssg = function() {
             return;
         }
 
-        select('#ssg-container').style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
+        select(CONTAINER_SYMBOL).style.transform = `translateY(-${unit.vh() * 100 * pageNum}px)`;
+        current = pageNum;
     };
 
     const revealRight = function() { 
         pages[current].style.transform = `translateX(-${100 * unit.vw()}px)`;
+        state = 'right';
         lock = true;
     };
 
     const revealLeft = function() { 
         pages[current].style.transform = `translateX(${100 * unit.vw()}px)`;
+        state = 'left';
         lock = true;
     };
 
     const conceal = function() {
         pages[current].style.transform = `translateX(0px)`;
+        state = '';
         lock = false;
     }
 
@@ -223,8 +234,13 @@ const ssg = function() {
             if (lock) { return; }
             let deltaY = evt.touches[0].screenY - startY;
 
-            if (deltaY > TOUCH_SENSITIVITY && hasUp()) {
-                scrollUp();
+
+            if (deltaY > TOUCH_SENSITIVITY) {
+                if (hasUp()){ 
+                    scrollUp(); 
+                } else if (deltaY > LONG_SWIPE) {
+                    window.location.reload();
+                }
             } else if (deltaY < -TOUCH_SENSITIVITY && hasDown()) {
                 scrollDown();
             }
@@ -237,33 +253,33 @@ const ssg = function() {
 
     const computeCSS = function (){ 
         return `
-            html, body, #ssg-container {
+            html, body, ${CONTAINER_SYMBOL} {
                 margin: 0!important;
                 padding: 0!important;
                 overflow: hidden!important;
             }
-            #ssg-container {
+            ${CONTAINER_SYMBOL} {
                 position: fixed!important;
                 top: 0!important;
                 left: 0!important;
                 width: ${100 * unit.vw()}px!important;
             }
-            .ssg-page {
+            ${PAGE_SYMBOL} {
                 box-sizing: border-box!important;
                 height: ${100 * unit.vh()}px!important;
             }
-            .ssg-child-right,
-            .ssg-child-left {
+            ${R_CHILD_SYMBOL},
+            ${L_CHILD_SYMBOL} {
                 position: absolute;
                 top: 0;
                 height: ${100 * unit.vh()}px!important;
                 width: ${100 * unit.vw()}px!important;
                 overflow-y: scroll;
             }
-            .ssg-child-right {
+            ${R_CHILD_SYMBOL} {
                 left: ${100 * unit.vw()}px;
             }
-            .ssg-child-left {
+            ${L_CHILD_SYMBOL} {
                 left: -${100 * unit.vw()}px;
             }
         `;
@@ -277,11 +293,27 @@ const ssg = function() {
             style.transitionTimingFunction = transition.function;
         }
 
-        apply(select('#ssg-container'));
+        apply(select(CONTAINER_SYMBOL));
 
         // for .. of is appearantly not supported in IE
         for (let i = 0; i <= max; i++) {
             apply(pages[i]);
+        }
+    }
+
+    const removeTransition = function() {
+        let remove = function(element) {
+            let style = element.style;
+            style.transitionProperty = '';
+            style.transitionDuration = '';
+            style.transitionTimingFunction = '';
+        }
+
+        remove(select(CONTAINER_SYMBOL));
+
+        // for .. of is appearantly not supported in IE
+        for (let i = 0; i <= max; i++) {
+            remove(pages[i]);
         }
     }
 
@@ -290,13 +322,10 @@ const ssg = function() {
     }
 
     const handleResize = function(event) {
+        removeTransition();
         applyStyle();
         setPage(current);
-        if (STATE.leftRevealed) {
-            revealLeft();
-        } else if (STATE.rightRevelaed) {
-            revealRight();
-        }
+        applyTransition();
     };
 
     const init = function() {
@@ -308,7 +337,7 @@ const ssg = function() {
         let style = create('style');
         style.setAttribute('id', 'ssgStyle');
         document.body.appendChild(style);
-        pages = selectAll('.ssg-page');
+        pages = selectAll(PAGE_SYMBOL);
         max = pages.length-1;
 
         applyStyle();
@@ -322,7 +351,7 @@ const ssg = function() {
     };
     
     window.addEventListener('DOMContentLoaded', init);
-    
+
     return {
         scrollDown: scrollDown,
         scrollUp: scrollUp,
