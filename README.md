@@ -7,13 +7,13 @@ A Javascript library for discrete scrolling. SSG lets you structure the content 
 
 Must have viewport tag defined for mobile - the library needs control over a few properties on `html`, `body`, `#ssg-container`, `.ssg-page` and `.ssg-child-right`/`.ssg-child-left`. The reserved properties are `margin`,`padding`,`height`,`width`,`overflow`,`transform`,`box-sizing`,`top|right|bottom|left` and `transition`. The inconvenience of having to modify the transition through API is an unfortunate consequence of having to toggle it on and off during some operations.
 
-To use the plugin, first you must define a container for the pages using `id="ssg-container"` - it is highly recommended to NOT choose body, since this breaks `positioning: fixed` on perifal stuff you wish to build on top of the scrollable content (scrollbar, pagenumber etc). Each page should then be defined sequentially inside the container, using `class="ssg-page"`.
+To use the plugin, first you must define a container for the pages using `id="ssg-container"` - it is highly recommended to NOT choose body, since this breaks `position: fixed` on perifal stuff you wish to build on top of the scrollable content (scrollbar, pagenumber etc). Each page should then be defined sequentially inside the container, using `class="ssg-page"`.
 
 There are no requirements for tagnames of pages, children or the container - but it is recommended to use block-level grouping tags such as `div`, `section`, `main`, `header`, `footer`, `aside` etc.. - remember as well that violating the reserved properties as described above will break stuff.
 
 There are no requirements for the element hierarchy either, except naturally that pages are in a container and children are in a page. Elements can be placed in between pages, or pages can be grouped semantically - but you should avoid placing any element with a nonzero height outside of a page, since this breaks viewport aligned positioning.
 
-### Simple Element Structure
+### Example Structure
 
 ```html
 <body>
