@@ -27,7 +27,7 @@
     }
 
     function testLastPage() {
-      ssg.setPage(0);
+      ssg.setIndex(0);
       for (let i = 0; ++i <= 10;) ssg.scrollDown();
       if (assertEquals.call(testLastPage, ssg.getIndex(), ssg.getPages().length-1))
         pass.call(testLastPage);

@@ -16,7 +16,7 @@ References
 
 */
 
-// TODO: signify *long* swipe up refresh or default on first page
+// TODO: Signify *long* swipe up refresh on first page
 // TODO: Consider implementing conceal/reveal and page-shown events
 
 // Polyfill for custom events, thanks to [1]
@@ -36,25 +36,35 @@ References
 })();
 
 const ssg = function() {
-    const DEBUG = true;
+    /* 
+    Used to detect 'momentum'-preserving scroll behaviour
+    known from mac touchpads and such. This needs more research,
+    and possibly a better solution.
+    */
     const PLATFORM = window.navigator.platform.toLowerCase();
+    const LONG_SCROLL_PLATFORMS = ['macintel'];
+    
     const CONTAINER_SYMBOL = '#ssg-container';
     const PAGE_SYMBOL = '.ssg-page';
     const L_CHILD_SYMBOL = '.ssg-child-left';
     const R_CHILD_SYMBOL = '.ssg-child-right';
-
-    const TIMEOUT = PLATFORM.indexOf('mac') === -1 ? 300 : 600;
+    
     const TOUCH_SENSITIVITY = 50;
     const SCROLL_SENSITIVITY = 8;
     const LONG_SWIPE = 200;
     const UP_KEYS = [37, 38];
     const DOWN_KEYS = [39, 40];
-
+    
+    let timeout = LONG_SCROLL_PLATFORMS.includes(PLATFORM) === -1 ? 300 : 700;
     let pages;
     let current = 0;
     let max = 0;
     let lock = false;
     let revealed = '';
+    let transition = {
+        duration: '0.5s',
+        function: 'cubic-bezier(.85,.14,.37,.98)'
+    };
 
     { // Block and hoist utils, just for IDE
         var select = function(query) { return document.querySelector(query); };
@@ -96,12 +106,7 @@ const ssg = function() {
         };
     }
 
-    const transition = {
-        duration: '0.4s',
-        function: 'cubic-bezier(.85,.14,.37,.98)'
-    };
-
-    const setPage = function(pageNum) {
+    const setIndex = function(pageNum) {
         if (pageNum > max || pageNum < 0) {
             outOfBoundsErr(pageNum, max);
             return;
@@ -113,6 +118,10 @@ const ssg = function() {
         else if ( revealed === 'right' ) revealRight();
         applyTransition();
     }
+
+    const setScrollTimeout = function(value) {
+        timeout = value;
+    }
  
     const setTransitionDuration = function(time) { 
         transition.duration = time; 
@@ -122,6 +131,22 @@ const ssg = function() {
         transition.function = func 
     };
     
+    const getPage = function() { 
+        return pages[current]; 
+    };
+    
+    const getPages = function() {
+        return pages;
+    }
+    
+    const getIndex = function() { 
+        return current; 
+    }; 
+
+    const getScrollTimeout = function() {
+        return timeout;
+    }
+
     const getTransitionDuration = function() { 
         return transition.duration; 
     };
@@ -129,18 +154,6 @@ const ssg = function() {
     const getTransitionFunction = function() { 
         return transition.function 
     };
-    
-    const getPage = function() { 
-        return pages[current]; 
-    };
-    
-    const getIndex = function() { 
-        return current; 
-    }; 
-
-    const getPages = function() {
-        return pages;
-    }
 
     const hasDown = function() { 
         return current < max; 
@@ -157,7 +170,7 @@ const ssg = function() {
         }
 
         lock = true;
-        setTimeout(() => lock=false, TIMEOUT);
+        setTimeout(() => lock=false, timeout);
         scrollTo(++current);
         dispatchScrollEvent(current-1, current);
     };
@@ -169,7 +182,7 @@ const ssg = function() {
         }
 
         lock = true;
-        setTimeout(function() { lock=false; }, TIMEOUT);
+        setTimeout(function() { lock=false; }, timeout);
         scrollTo(--current);
         dispatchScrollEvent(current+1, current);
     };
@@ -200,7 +213,7 @@ const ssg = function() {
         pages[current].style.transform = `translateX(0px)`;
         revealed = '';
         lock = false;
-    }
+    };
 
     const handleWheel = function(event) {
         event.stopPropagation();
@@ -235,25 +248,17 @@ const ssg = function() {
             if (lock) { return; }
             let deltaY = evt.touches[0].screenY - startY;
 
-            if (DEBUG) {
-                console.debug(`${parseInt(evt.touches[0].screenY)} - ${parseInt(startY)} = ${parseInt(deltaY)}`);
-            }
-
             if (deltaY > TOUCH_SENSITIVITY) {
                 if (hasUp()){ 
                     document.removeEventListener('touchmove', handleSwipe);
                     scrollUp(); 
                 } else if (deltaY > LONG_SWIPE) {
-                    // Todo: signify this
                     window.location.reload();
                 }
             } else if (deltaY < -TOUCH_SENSITIVITY && hasDown()) {
                 document.removeEventListener('touchmove', handleSwipe);
                 scrollDown();
             }
-
-            
-
         };
 
         function removeHandlers(e) {
@@ -263,6 +268,45 @@ const ssg = function() {
 
         document.addEventListener('touchend', removeHandlers);
         document.addEventListener('touchmove', handleSwipe);
+    };
+
+    const handleResize = function(event) {
+        removeTransition();
+        applyStyle();
+        setIndex(current);
+        applyTransition();
+    };
+
+    const applyTransition = function() {
+        let apply = function(element) {
+            let style = element.style;
+            style.transitionProperty = 'transform';
+            style.transitionDuration = transition.duration;
+            style.transitionTimingFunction = transition.function;
+        }
+
+        apply(select(CONTAINER_SYMBOL));
+
+        // for .. of is appearantly not supported in IE
+        for (let i = 0; i <= max; i++) {
+            apply(pages[i]);
+        }
+    }
+
+    const removeTransition = function() {
+        let remove = function(element) {
+            let style = element.style;
+            style.transitionProperty = '';
+            style.transitionDuration = '';
+            style.transitionTimingFunction = '';
+        }
+
+        remove(select(CONTAINER_SYMBOL));
+
+        // for .. of is appearantly not supported in IE
+        for (let i = 0; i <= max; i++) {
+            remove(pages[i]);
+        }
     }
 
     const computeCSS = function (){ 
@@ -299,48 +343,9 @@ const ssg = function() {
         `;
     };
 
-    const applyTransition = function() {
-        let apply = function(element) {
-            let style = element.style;
-            style.transitionProperty = 'transform';
-            style.transitionDuration = transition.duration;
-            style.transitionTimingFunction = transition.function;
-        }
-
-        apply(select(CONTAINER_SYMBOL));
-
-        // for .. of is appearantly not supported in IE
-        for (let i = 0; i <= max; i++) {
-            apply(pages[i]);
-        }
-    }
-
-    const removeTransition = function() {
-        let remove = function(element) {
-            let style = element.style;
-            style.transitionProperty = '';
-            style.transitionDuration = '';
-            style.transitionTimingFunction = '';
-        }
-
-        remove(select(CONTAINER_SYMBOL));
-
-        // for .. of is appearantly not supported in IE
-        for (let i = 0; i <= max; i++) {
-            remove(pages[i]);
-        }
-    }
-
     const applyStyle = function() {
         select('#ssgStyle').innerHTML = computeCSS();
     }
-
-    const handleResize = function(event) {
-        removeTransition();
-        applyStyle();
-        setPage(current);
-        applyTransition();
-    };
 
     const init = function() {
         window.pageYOffset = 0;
@@ -356,7 +361,7 @@ const ssg = function() {
 
         applyStyle();
         applyTransition();
-        setPage(current);
+        setIndex(current);
 
         window.addEventListener('resize', handleResize);
         document.addEventListener('wheel', handleWheel);
@@ -367,24 +372,26 @@ const ssg = function() {
     window.addEventListener('DOMContentLoaded', init);
 
     return {
+        // Animated Mutation
         scrollDown: scrollDown,
         scrollUp: scrollUp,
         scrollTo: scrollTo,
-
-        setPage: setPage,
-
         revealRight: revealRight,
         revealLeft: revealLeft,
         conceal: conceal,
 
-        getPage: getPage,
-        getIndex: getIndex,
-        getPages: getPages,
-
-        getTransitionDuration: getTransitionDuration,
-        getTransitionFunction: getTransitionFunction,
-
+        // Mutation
+        setIndex: setIndex,
+        setScrollTimeout: setScrollTimeout,
         setTransitionDuration: setTransitionDuration,
         setTransitionFunction: setTransitionFunction,
+        
+        // Access
+        getPage: getPage,
+        getPages: getPages,
+        getIndex: getIndex,
+        getScrollTimeout: getScrollTimeout,
+        getTransitionDuration: getTransitionDuration,
+        getTransitionFunction: getTransitionFunction,
     };
 }();
