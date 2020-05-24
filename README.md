@@ -65,7 +65,7 @@ Method | Specification
 
 ### Horizontal Navigation
 
-No horizontal navigation is done internally, the functionality is simply provided through the following methods. Note that since the client code has all the power here, there are __NO CHECKS__ performed, to determine whether there is actually any content to reveal!
+No horizontal navigation is done internally, the functionality is simply provided through the following methods.
 
 Method | Specification | Transition
 -|-|-
@@ -79,9 +79,9 @@ If you wish to specify custom transition properties for animations, this can be 
 
 Method | Specification
 -|-
-`ssg.getScrollTimeout()` | Returns an integer, the time scroll is disabled after a scroll event fires - in miliseconds.
 `ssg.getTransitionDuration()` | Returns a string, the transition duration, eg. `"1s"`
 `ssg.getTransitionFunction()` | Returns a string, the transition function, eg. `"ease-in"`
+`ssg.getScrollTimeout()` | Returns an integer, the time scroll is disabled after a scroll event fires - in miliseconds.
 
 If you wish to use the default, or if it is otherwise convenient to you, these accessors are provided
 
