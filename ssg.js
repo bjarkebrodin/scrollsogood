@@ -36,15 +36,16 @@ References
 })();
 
 const ssg = function() {
-    const DEBUG = false;
-
+    const DEBUG = true;
+    const PLATFORM = window.navigator.platform.toLowerCase();
     const CONTAINER_SYMBOL = '#ssg-container';
     const PAGE_SYMBOL = '.ssg-page';
     const L_CHILD_SYMBOL = '.ssg-child-left';
     const R_CHILD_SYMBOL = '.ssg-child-right';
 
-    const TIMEOUT = 800;
+    const TIMEOUT = PLATFORM.indexOf('mac') === -1 ? 300 : 600;
     const TOUCH_SENSITIVITY = 50;
+    const SCROLL_SENSITIVITY = 8;
     const LONG_SWIPE = 200;
     const UP_KEYS = [37, 38];
     const DOWN_KEYS = [39, 40];
@@ -207,9 +208,9 @@ const ssg = function() {
         // Todo: handle special scroll types like mac etc
         if (lock) { return; }
 
-        if (event.deltaY > 0 && hasDown()) {
+        if (event.deltaY > SCROLL_SENSITIVITY && hasDown()) {
             scrollDown();
-        } else if (event.deltaY < 0 && hasUp()) {
+        } else if (event.deltaY < -SCROLL_SENSITIVITY && hasUp()) {
             scrollUp();
         }
     };
