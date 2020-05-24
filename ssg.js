@@ -38,14 +38,16 @@ References
 })();
 
 const ssg = function() {
+    const DEBUG = false;
+
     const CONTAINER_SYMBOL = '#ssg-container';
     const PAGE_SYMBOL = '.ssg-page';
     const L_CHILD_SYMBOL = '.ssg-child-left';
     const R_CHILD_SYMBOL = '.ssg-child-right';
 
     const TIMEOUT = 800;
-    const TOUCH_SENSITIVITY = 10;
-    const LONG_SWIPE = 25;
+    const TOUCH_SENSITIVITY = 50;
+    const LONG_SWIPE = 200;
     const UP_KEYS = [37, 38];
     const DOWN_KEYS = [39, 40];
 
@@ -234,20 +236,33 @@ const ssg = function() {
             if (lock) { return; }
             let deltaY = evt.touches[0].screenY - startY;
 
+            if (DEBUG) {
+                console.debug(`${parseInt(evt.touches[0].screenY)} - ${parseInt(startY)} = ${parseInt(deltaY)}`);
+            }
 
             if (deltaY > TOUCH_SENSITIVITY) {
                 if (hasUp()){ 
+                    document.removeEventListener('touchmove', handleSwipe);
                     scrollUp(); 
                 } else if (deltaY > LONG_SWIPE) {
+                    // Todo: signify this
                     window.location.reload();
                 }
             } else if (deltaY < -TOUCH_SENSITIVITY && hasDown()) {
+                document.removeEventListener('touchmove', handleSwipe);
                 scrollDown();
             }
 
-            document.removeEventListener('touchmove', handleSwipe);
+            
+
         };
 
+        function removeHandlers(e) {
+            document.removeEventListener('touchmove', handleSwipe);
+            document.removeEventListener('touchend', removeHandlers);
+        }
+
+        document.addEventListener('touchend', removeHandlers);
         document.addEventListener('touchmove', handleSwipe);
     }
 
