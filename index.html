@@ -9,44 +9,50 @@
     <link rel="stylesheet" href="./assets/styles.css">
 </head>
 <body>
-    <div id="scrollbar" class="flx v centered">
+    <header>
+        <h1>ScrollSoGood</h1>
+        <p>A minimalistic Javascript plugin for discrete scrolling.</p>
+    </header>
+    <main>
+        <h2>Designed for ease of use and customizability</h2>
+        <article>
+            <h3>How to use SSG</h3>
 
-    </div>
-    <div id="ssg-container">
-        <header class="ssg-page">
-                <div class="flx v centered maximized">
-                    <h1 style="font-size: 0; color: transparent;">
-                        <span>S</span>croll<span>S</span>o<span>G</span>ood
-                    </h1>
-                    <p style="color: transparent">< Just your friendly neighbourhood scrolling library ></p>
-                </div>
-                <div class="flx v centered scroll-signifier">
-                    <button class="down-arrow" onclick="ssg.scrollDown()">
-                    </button>
-                </div>
-        </header>
-        <main>
-            <section class="ssg-page flx v centered">
-                <h2>Designed for simplicity & ease of use.</h2>
-                <p>SSG strives to inflict the least strain possible, while providing wide browser coverage and a minimalistic and clean API. </p>
-                <button onclick="ssg.revealRight()"></button>
-                <div class="ssg-child-right">
-                    <h3>Description</h3>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolore iste natus architecto nihil, numquam, inventore quas quibusdam aut, excepturi dolorem repellendus praesentium exercitationem obcaecati! Impedit autem quasi praesentium atque!
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolore iste natus architecto nihil, numquam, inventore quas quibusdam aut, excepturi dolorem repellendus praesentium exercitationem obcaecati! Impedit autem quasi praesentium atque!
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolore iste natus architecto nihil, numquam, inventore quas quibusdam aut, excepturi dolorem repellendus praesentium exercitationem obcaecati! Impedit autem quasi praesentium atque!
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolore iste natus architecto nihil, numquam, inventore quas quibusdam aut, excepturi dolorem repellendus praesentium exercitationem obcaecati! Impedit autem quasi praesentium atque!
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolore iste natus architecto nihil, numquam, inventore quas quibusdam aut, excepturi dolorem repellendus praesentium exercitationem obcaecati! Impedit autem quasi praesentium atque!
-                    <button onclick="ssg.conceal()"></button>
-                </div>
-            </section>
-            <section class="ssg-page">
+            <ol>
+                <li>Define a parent container for pages by setting <code>id="ssg-container"</code></li>
+                <li>Define each page sequentially using <code>class="ssg-page"</code></li>
+                <li>Optionally specify sub-pages for each page using <code>class="ssg-child-left"</code> or <code>class="ssg-child-right"</code>. The left/right determines to which side of the main page the child will be positioned. A subpage or child should alway be defined inside a page</li>
+                <li>Use the API and custom scroll events to make your content reactive, and configure the plugin to your needs. Read more in the documentation at: https://github.com/bjarkebrodin/scrollsogood</li>
+            </ol>
+            
+            <h5>Example Structure</h5>
+            <pre><code>&lt;body&gt;
+    &lt;!-- fixed content here --&gt;
+    &lt;div id="ssg-container"&gt;
 
-            </section>
-        </main>
-        <footer>
+        &lt;!-- first page --&gt;
+        &lt;div class="ssg-page"&gt;
+            Page 1 content
+            &lt;button onclick="ssg.revealRight()"&gt;right&lt;/button&gt;
+            &lt;div class="ssg-child-right"&gt;
+                hidden content (right)
+                &lt;button onclick="ssg.conceal()"&gt;back&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    
+        &lt;!-- second page --&gt;
+        &lt;div class="ssg-page"&gt;
+            Page 2 content
+            &lt;button onclick="ssg.revealLeft()"&gt;left&lt;/button&gt;
+            &lt;div class="ssg-child-left"&gt;
+                hidden content (left) --&gt;
+                &lt;button onclick="ssg.conceal()"&gt;back&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
 
-        </footer>
-    </div>
+    &lt;/div&gt;
+&lt;/body&gt;</code></pre>
+        </article>
+    </main>
 </body>
 </html>

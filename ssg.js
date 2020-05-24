@@ -92,7 +92,7 @@ const ssg = function() {
                 self.srcIndex = from;
                 self.targetIndex = to;
                 self.srcPage = pages[from];
-                self.targetPageIndex = pages[to];
+                self.targetPage = pages[to];
 
                 return self;
             }
@@ -105,6 +105,8 @@ const ssg = function() {
             pages[from].dispatchEvent(new SSGEvent('ssg-scroll', from, to));
         };
     }
+
+    // Setters
 
     const setIndex = function(pageNum) {
         if (pageNum > max || pageNum < 0) {
@@ -131,6 +133,8 @@ const ssg = function() {
         transition.function = func 
     };
     
+    // Getters
+
     const getPage = function() { 
         return pages[current]; 
     };
@@ -155,6 +159,9 @@ const ssg = function() {
         return transition.function 
     };
 
+
+    // Safety utils for core movement functions
+
     const hasDown = function() { 
         return current < max; 
     };
@@ -162,7 +169,25 @@ const ssg = function() {
     const hasUp = function() { 
         return current > 0; 
     };
+
+    const hasChild = function(side) {
+        let symbol = side === 'left' ? L_CHILD_SYMBOL : R_CHILD_SYMBOL;
+        symbol = symbol.substring(1); // Remove selector prefix
+
+        let page = pages[current];
+        let children = page.childNodes;
+        for(let i = 0; i < children.length; i++){
+            if (children[i].className === undefined) { continue; }
+            if (children[i].className.indexOf(symbol) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    };
     
+
+    // Core movement functions
+
     const scrollDown = function() {
         if (current + 1 > max) {
             outOfBoundsErr(current + 1);
@@ -198,22 +223,50 @@ const ssg = function() {
     };
 
     const revealRight = function() { 
+        if (revealed == 'right') {
+            console.warn('ssg warning: reveal right called, but right is already revealed');
+            return;
+        }
+
+        if (!hasChild('right')) {
+            console.error(`ssg error: page ${current} has no right child to reveal`);
+            return;
+        }
+
         pages[current].style.transform = `translateX(-${100 * unit.vw()}px)`;
         revealed = 'right';
         lock = true;
     };
 
     const revealLeft = function() { 
+        if (revealed     == 'left') {
+            console.warn('ssg warning: reveal left called, but left is already revealed');
+            return;
+        }
+
+        if (!hasChild('left')) {
+            console.error(`ssg error: page ${current} has no left child to reveal`);
+            return;
+        }
+
         pages[current].style.transform = `translateX(${100 * unit.vw()}px)`;
         revealed = 'left';
         lock = true;
     };
 
     const conceal = function() {
+        if ( revealed.length == 0 ) {
+            console.warn('ssg warning: conceal called from concealed state');
+            return;
+        }
+
         pages[current].style.transform = `translateX(0px)`;
         revealed = '';
         lock = false;
     };
+
+
+    // Event Handlers
 
     const handleWheel = function(event) {
         event.stopPropagation();
@@ -277,6 +330,9 @@ const ssg = function() {
         applyTransition();
     };
 
+
+    // Style
+
     const applyTransition = function() {
         let apply = function(element) {
             let style = element.style;
@@ -328,11 +384,12 @@ const ssg = function() {
             }
             ${R_CHILD_SYMBOL},
             ${L_CHILD_SYMBOL} {
-                position: absolute;
-                top: 0;
+                position: absolute!important;
+                top: 0!important;
+                box-sizing: border-box!important;
                 height: ${100 * unit.vh()}px!important;
                 width: ${100 * unit.vw()}px!important;
-                overflow-y: scroll;
+                overflow-y: auto;
             }
             ${R_CHILD_SYMBOL} {
                 left: ${100 * unit.vw()}px;
